@@ -353,15 +353,20 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
     int isEarlier=0;
     int isLater=0;
     int n1=0;
-    int *arr1;
+    int max1=100;
+    int max2=100;
+    int max3=100;
+    int max4=100;
+    int max5=100;
+    int *arr1=NULL;
     int n2=0;
-    int *arr2;
+    int *arr2=NULL;
     int n3=0;
-    int *arr3;
+    int *arr3=NULL;
     int n4=0;
-    int *arr4;
+    int *arr4=NULL;
     int n5=0;
-    int *arr5;
+    int *arr5=NULL;
     int monthE=0;
     int monthL=0;
     int startPosition=0;
@@ -370,12 +375,12 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
     int lowerBound=0;
     int upperBound=0;
     int result=0;
+    qsort(data,n,sizeof(*data),(int(*)(const void*, const void*))RZCompare);
     arr1=(int*)calloc(100,sizeof(int));
     arr2=(int*)calloc(100,sizeof(int));
     arr3=(int*)calloc(100,sizeof(int));
-    arr5=(int*)calloc(100,sizeof(int));
     arr4=(int*)calloc(100,sizeof(int));
-    qsort(data,n,sizeof(*data),(int(*)(const void*, const void*))RZCompare);
+    arr5=(int*)calloc(100,sizeof(int));
     lowerBound=lowerUppperBoundF(data,0,n-1,RZ,1);
     upperBound=lowerUppperBoundF(data,0,n-1,RZ,0);
     if(lowerBound==-1 && upperBound==-1)
@@ -389,11 +394,12 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
             result=strcmp(data[i].s_RZ,RZ);
             if(sum==data[i].s_inMin && result==0)
             {
-                identical++;
-                if(identical==100 || n1%100==1)
+                if(n1>=max1)
                 {
-                    arr1=(int*)realloc(arr1,100*sizeof(int));
+                    max1+=max1+100;
+                    arr1=(int*)realloc(arr1,max1*sizeof(int));
                 }
+                identical++;
                 arr1[n1]=data[i].s_cameraID;
                 n1++;
                 qsort(arr1,n1,sizeof(*arr1),(int(*)(const void *, const void *)) daysMinCompare);
@@ -402,21 +408,23 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
             {
                 if(data[i].s_inMin<sum)
                 {
-                    isEarlier++;
-                    if(n2==100 || n2%100==1)
+                    if(n2>=max2)
                     {
-                        arr2=(int*)realloc(arr2,100*sizeof(int));
+                        max2+=max2+100;
+                        arr2=(int*)realloc(arr2,max2*sizeof(int));
                     }
+                    isEarlier++;
                     arr2[n2]=data[i].s_inMin;
                     n2++;
                 }
                 if(sum<data[i].s_inMin)
                 {
-                    isLater++;
-                    if(n3==100 || n3%100==1)
+                    if(n3>=max3)
                     {
-                        arr3=(int*)realloc(arr3,100*sizeof(int));
+                        max3+=max3+100;
+                        arr3=(int*)realloc(arr3,max3*sizeof(int));
                     }
+                    isLater++;
                     arr3[n3]=data[i].s_inMin;
                     n3++;
                 }
@@ -429,13 +437,10 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
         {
             if(lowerBound==upperBound)
             {
-                if(hour<10)
-                {
-                    printf(">Presne: %s %02d %d:%02d, 1x ",month,day,hour,min);
-                    printf("[");
-                    printf("%d",data[lowerBound].s_cameraID);
-                    printf("]\n");
-                }
+                printf(">Presne: %s %02d %d:%02d, 1x ",month,day,hour,min);
+                printf("[");
+                printf("%d",data[lowerBound].s_cameraID);
+                printf("]\n");
             }
             else
             {     
@@ -465,9 +470,10 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
                 {
                     if(arr2[n2-1]==data[i].s_inMin)
                     {
-                        if(n4==100 || n4%100==1)
+                        if(n4>=max4)
                         {
-                            arr4=(int*)realloc(arr4,100*sizeof(int));
+                            max4+=max4+100;
+                            arr4=(int*)realloc(arr4,max4*sizeof(int));
                         }
                         arr4[n4]=data[i].s_cameraID;
                         n4++;
@@ -481,9 +487,10 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
                 {
                     if(arr3[0]==data[i].s_inMin)
                     {
-                        if(n5==100 || n5%100==1)
+                        if(n5>=max5)
                         {
-                            arr5=(int*)realloc(arr5,100*sizeof(int));
+                            max5+=max5+100;
+                            arr5=(int*)realloc(arr5,max5*sizeof(int));
                         }
                         arr5[n5]=data[i].s_cameraID;
                         n5++;
@@ -601,21 +608,8 @@ CAMERA *readRZ(int *n)
     *n=0;
     input=scanf(" { %d : %1000s %3s %d %2d : %2d %1c",&cameraID,RZ,month,&day,&hour,&min,&lastCharacter);
     if(input!=7 || (lastCharacter!='}' && lastCharacter!=','))
-    {  
-        free(data);          
+    {        
         return NULL;
-    }
-    if(*n>=max)
-    {
-        if(max<10)
-        {
-            max=max+10;
-        }
-        else
-        {
-            max=max+5;
-        }
-        data=(CAMERA*)realloc(data,max*sizeof(*data));
     }
     //checking if the first literal is capital
     if(month[0]>='a' && month[0]<='z')
@@ -632,6 +626,18 @@ CAMERA *readRZ(int *n)
     if(hour>23 || hour<0 || min>59 || min<0)
     {
         return NULL;          
+    }
+    if(*n>=max)
+    {
+        if(max<10)
+        {
+            max=max+10;
+        }
+        else
+        {
+            max=max+5;
+        }
+        data=(CAMERA*)realloc(data,max*sizeof(*data));
     }
     sum=(numOfDay(monthInt,day))*1440+hour*60+min;
     strncpy(data[*n].s_RZ,RZ,sizeof(data[*n].s_RZ));
@@ -651,18 +657,6 @@ CAMERA *readRZ(int *n)
             free(data);
             return NULL;
         }
-        if(*n>=max)
-        {
-            if(max<10)
-            {
-                max=max+10;
-            }
-            else
-            {
-                max=max+5;
-            }
-            data=(CAMERA*)realloc(data,max*sizeof(*data));
-        }
         //checking if the first literal is capital
         if(month[0]>='a' && month[0]<='z')
         {
@@ -678,6 +672,18 @@ CAMERA *readRZ(int *n)
         if(hour>23 || hour<0 || min>59 || min<0)
         {
             return NULL;          
+        }
+        if(*n>=max)
+        {
+            if(max<10)
+            {
+                max=max+10;
+            }
+            else
+            {
+                max=max+5;
+            }
+            data=(CAMERA*)realloc(data,max*sizeof(*data));
         }
         sum=(numOfDay(monthInt,day))*1440+hour*60+min;
         strncpy(data[*n].s_RZ,RZ,sizeof(data[*n].s_RZ));
@@ -699,80 +705,84 @@ int main(void)
     int sum;
     int n;
     CAMERA *data;
-    int nRz=0;
-    char *RZ;
-    int nMonth=0;
-    char *month;
+    char *RZ=NULL;
+    char *month=NULL;
     int monthInt;
     int day;
     int hour;
     int min;
     int input;
-    RZ=(char*)calloc(1001,sizeof(char));
-    month=(char*)calloc(4,sizeof(char));
+    int end=0;
     printf("Data z kamer:\n");
     data=readRZ(&n);
     if(!data)
     {
         printf("Nespravny vstup.\n");
         free(data);
+        free(RZ);
+        free(month);
         return 0;
     }
     printf("Hledani:\n");
-    while ((input=scanf(" %1000s %3s %d %2d:%2d",RZ,month,&day,&hour,&min))!=EOF)
+    while (end!=1)
     {
-        if(input!=5)
+        RZ=(char*)calloc(1001,sizeof(char));
+        month=(char*)calloc(4,sizeof(char));
+        if((input=scanf(" %1000s %3s %d %2d:%2d",RZ,month,&day,&hour,&min))!=EOF)
         {
-            printf("Nespravny vstup.\n");
+            if(input!=5)
+            {
+                printf("Nespravny vstup.\n");
+                free(data);
+                free(RZ);
+                free(month);
+                return 0;
+            }
+            //checking if the first literal is capital
+            if(month[0]>='a' && month[0]<='z')
+            {
+                printf("Nespravny vstup.\n");
+                free(data);
+                free(RZ);
+                free(month);
+                return 0;
+            }
+            //Checking months
+            monthInt=months(month,day);
+            if(monthInt==0)
+            { 
+                printf("Nespravny vstup.\n");
+                free(data);
+                free(RZ);
+                free(month);
+                return 0;
+            }
+            //Checking hours and minutes
+            if(hour>23 || hour<0 || min>59 || min<0)
+            {
+                printf("Nespravny vstup.\n");
+                free(data);
+                free(RZ);
+                free(month);
+                return 0;   
+            }
+            sum=(numOfDay(monthInt,day))*1440+hour*60+min; 
+            findRZ(data,n,RZ,month,monthInt,day,hour,min,sum);
             free(RZ);
             free(month);
-            free(data);
-            return 0;
         }
-        //checking if the first literal is capital
-        if(month[0]>='a' && month[0]<='z')
+        if(input==EOF)
         {
-            printf("Nespravny vstup.\n");
-            free(RZ);
-            free(month);
-            free(data);
-            return 0;
+            end=1;
         }
-        //Checking months
-        monthInt=months(month,day);
-        if(monthInt==0)
-        { 
-            printf("Nespravny vstup.\n");
-            free(RZ);
-            free(month);  
-            free(data);
-            return 0;
-        }
-        //Checking hours and minutes
-        if(hour>23 || hour<0 || min>59 || min<0)
+        else
         {
-            printf("Nespravny vstup.\n");
-            free(RZ);
-            free(month);
-            free(data);
-            return 0;        
+            end=0;
         }
-        nRz++;
-        nMonth++;
-        if(nRz>=1000)
-        {
-            RZ=(char*)realloc(RZ,1001*sizeof(char));
-        }
-        if(nMonth>=4)
-        {
-            month=(char*)realloc(month,4*sizeof(char));
-        }
-        sum=(numOfDay(monthInt,day))*1440+hour*60+min; 
-        findRZ(data,n,RZ,month,monthInt,day,hour,min,sum);
-        free(RZ);
-        free(month);
-
+              
     }
+    free(RZ);
+    free(month);
     free(data);
     return 0;
 }
