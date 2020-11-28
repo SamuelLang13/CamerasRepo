@@ -724,6 +724,8 @@ int main(void)
         if(input!=5)
         {
             printf("Nespravny vstup.\n");
+            free(RZ);
+            free(month);
             free(data);
             return 0;
         }
@@ -731,6 +733,8 @@ int main(void)
         if(month[0]>='a' && month[0]<='z')
         {
             printf("Nespravny vstup.\n");
+            free(RZ);
+            free(month);
             free(data);
             return 0;
         }
@@ -738,7 +742,9 @@ int main(void)
         monthInt=months(month,day);
         if(monthInt==0)
         { 
-            printf("Nespravny vstup.\n");  
+            printf("Nespravny vstup.\n");
+            free(RZ);
+            free(month);  
             free(data);
             return 0;
         }
@@ -746,6 +752,8 @@ int main(void)
         if(hour>23 || hour<0 || min>59 || min<0)
         {
             printf("Nespravny vstup.\n");
+            free(RZ);
+            free(month);
             free(data);
             return 0;        
         }
