@@ -396,13 +396,12 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
             {
                 if(n1>=max1)
                 {
-                    max1+=max1+100;
+                    max1+=max1+200;
                     arr1=(int*)realloc(arr1,max1*sizeof(int));
                 }
                 identical++;
                 arr1[n1]=data[i].s_cameraID;
                 n1++;
-                qsort(arr1,n1,sizeof(*arr1),(int(*)(const void *, const void *)) daysMinCompare);
             }
             else
             {
@@ -410,7 +409,7 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
                 {
                     if(n2>=max2)
                     {
-                        max2+=max2+100;
+                        max2+=max2+200;
                         arr2=(int*)realloc(arr2,max2*sizeof(int));
                     }
                     isEarlier++;
@@ -421,7 +420,7 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
                 {
                     if(n3>=max3)
                     {
-                        max3+=max3+100;
+                        max3+=max3+200;
                         arr3=(int*)realloc(arr3,max3*sizeof(int));
                     }
                     isLater++;
@@ -472,7 +471,7 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
                     {
                         if(n4>=max4)
                         {
-                            max4+=max4+100;
+                            max4+=max4+200;
                             arr4=(int*)realloc(arr4,max4*sizeof(int));
                         }
                         arr4[n4]=data[i].s_cameraID;
@@ -489,7 +488,7 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
                     {
                         if(n5>=max5)
                         {
-                            max5+=max5+100;
+                            max5+=max5+200;
                             arr5=(int*)realloc(arr5,max5*sizeof(int));
                         }
                         arr5[n5]=data[i].s_cameraID;
@@ -607,7 +606,7 @@ CAMERA *readRZ(int *n)
     /*--------------------*/
     *n=0;
     input=scanf(" { %d : %1000s %3s %d %2d : %2d %1c",&cameraID,RZ,month,&day,&hour,&min,&lastCharacter);
-    if(input!=7 || (lastCharacter!='}' && lastCharacter!=','))
+    if(input!=7 || cameraID<0 || (lastCharacter!='}' && lastCharacter!=','))
     {        
         return NULL;
     }
@@ -652,7 +651,7 @@ CAMERA *readRZ(int *n)
     while (tmp!='}' && lastCharacter!='}')
     {
         input=scanf("%d : %1000s %3s %d %2d:%2d %1c",&cameraID,RZ,month,&day,&hour,&min,&lastCharacter);
-        if((lastCharacter!=',' && lastCharacter!='}') || input!=7 ||tmp=='}')
+        if((lastCharacter!=',' && lastCharacter!='}') || cameraID<0 || input!=7 ||tmp=='}')
         {
             free(data);
             return NULL;
@@ -769,7 +768,7 @@ int main(void)
                 free(data);
                 return 0;   
             }
-            sum=(numOfDay(monthInt,day))*1440+hour*60+min; 
+            sum=(numOfDay(monthInt,day))*1440+hour*60+min;
             findRZ(data,n,RZ,month,monthInt,day,hour,min,sum);
             free(RZ);
             free(month);
@@ -782,9 +781,9 @@ int main(void)
         {
             end=0;
         }
-              
     }
-    
+    free(RZ);
+    free(month);
     free(data);
     return 0;
 }
