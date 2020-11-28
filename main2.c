@@ -370,6 +370,11 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
     int lowerBound=0;
     int upperBound=0;
     int result=0;
+    arr1=(int*)calloc(100,sizeof(int));
+    arr2=(int*)calloc(100,sizeof(int));
+    arr3=(int*)calloc(100,sizeof(int));
+    arr5=(int*)calloc(100,sizeof(int));
+    arr4=(int*)calloc(100,sizeof(int));
     qsort(data,n,sizeof(*data),(int(*)(const void*, const void*))RZCompare);
     lowerBound=lowerUppperBoundF(data,0,n-1,RZ,1);
     upperBound=lowerUppperBoundF(data,0,n-1,RZ,0);
@@ -385,11 +390,7 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
             if(sum==data[i].s_inMin && result==0)
             {
                 identical++;
-                if(n1==0)
-                {
-                    arr1=(int*)calloc(100,sizeof(int));
-                }
-                else if(identical==100)
+                if(identical==100)
                 {
                     arr1=(int*)realloc(arr1,100*sizeof(int));
                 }
@@ -402,38 +403,28 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
                 if(data[i].s_inMin<sum)
                 {
                     isEarlier++;
-                    if(n2==0)
-                    {
-                        arr2=(int*)calloc(100,sizeof(int));
-                    }
-                    else if(n2==100)
+                    if(n2==100)
                     {
                         arr2=(int*)realloc(arr2,100*sizeof(int));
                     }
                     arr2[n2]=data[i].s_inMin;
                     n2++;
-                    qsort(arr2,n2,sizeof(*arr2),(int(*)(const void *, const void *)) daysMinCompare);
                 }
                 if(sum<data[i].s_inMin)
                 {
                     isLater++;
-                    if(n3==0)
-                    {
-                        arr3=(int*)calloc(100,sizeof(int));
-                    }
-                    else if(n3==100)
+                    if(n3==100)
                     {
                         arr3=(int*)realloc(arr3,100*sizeof(int));
                     }
                     arr3[n3]=data[i].s_inMin;
                     n3++;
-                    qsort(arr3,n3,sizeof(*arr3),(int(*)(const void *, const void *)) daysMinCompare);
                 }
             }
         }
-        //qsort(arr1,n1,sizeof(*arr1),(int(*)(const void *, const void *)) daysMinCompare);
-        //qsort(arr2,n2,sizeof(*arr2),(int(*)(const void *, const void *)) daysMinCompare);
-        //qsort(arr3,n3,sizeof(*arr3),(int(*)(const void *, const void *)) daysMinCompare);
+        qsort(arr1,n1,sizeof(*arr1),(int(*)(const void *, const void *)) daysMinCompare);
+        qsort(arr2,n2,sizeof(*arr2),(int(*)(const void *, const void *)) daysMinCompare);
+        qsort(arr3,n3,sizeof(*arr3),(int(*)(const void *, const void *)) daysMinCompare);
         if(identical>0)
         {
             if(lowerBound==upperBound)
@@ -474,11 +465,7 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
                 {
                     if(arr2[n2-1]==data[i].s_inMin)
                     {
-                        if(n4==0)
-                        {
-                            arr4=(int*)calloc(100,sizeof(int));
-                        }
-                        else if(n4==100)
+                        if(n4==100)
                         {
                             arr4=(int*)realloc(arr4,100*sizeof(int));
                         }
@@ -488,18 +475,13 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
                         {
                             monthE=i;
                         }
-                        qsort(arr4,n4,sizeof(*arr4),(int(*)(const void *, const void *)) daysMinCompare);
                     }
                 }
                 if(isLater!=0 && n3!=0)
                 {
                     if(arr3[0]==data[i].s_inMin)
                     {
-                        if(n5==0)
-                        {
-                            arr5=(int*)calloc(100,sizeof(int));
-                        }
-                        else if(n5==100)
+                        if(n5==100)
                         {
                             arr5=(int*)realloc(arr5,100*sizeof(int));
                         }
@@ -509,12 +491,13 @@ void findRZ(CAMERA*data,int n,char RZ[],char month[],int monthInt,int day, int h
                         {
                             monthL=i;
                         }
-                        qsort(arr5,n5,sizeof(*arr5),(int(*)(const void *, const void *)) daysMinCompare);
                     }
                 }
             }
             identicalE=0;
-            identicalL=0;                 
+            identicalL=0;
+            qsort(arr4,n4,sizeof(*arr4),(int(*)(const void *, const void *)) daysMinCompare); 
+            qsort(arr5,n5,sizeof(*arr5),(int(*)(const void *, const void *)) daysMinCompare);                
             for (int i = 0; i <n4; i++)
             {
                 identicalE++;
