@@ -705,6 +705,9 @@ int main(void)
     int sum;
     int n;
     CAMERA *data;
+    //int nC=0;
+    //int max1=0;
+    //int max2=0;
     char *RZ=NULL;
     char *month=NULL;
     int monthInt;
@@ -733,18 +736,18 @@ int main(void)
             if(input!=5)
             {
                 printf("Nespravny vstup.\n");
-                free(data);
                 free(RZ);
                 free(month);
+                free(data);
                 return 0;
             }
             //checking if the first literal is capital
             if(month[0]>='a' && month[0]<='z')
             {
                 printf("Nespravny vstup.\n");
-                free(data);
                 free(RZ);
                 free(month);
+                free(data);
                 return 0;
             }
             //Checking months
@@ -752,18 +755,18 @@ int main(void)
             if(monthInt==0)
             { 
                 printf("Nespravny vstup.\n");
-                free(data);
                 free(RZ);
                 free(month);
+                free(data);
                 return 0;
             }
             //Checking hours and minutes
             if(hour>23 || hour<0 || min>59 || min<0)
             {
                 printf("Nespravny vstup.\n");
-                free(data);
                 free(RZ);
                 free(month);
+                free(data);
                 return 0;   
             }
             sum=(numOfDay(monthInt,day))*1440+hour*60+min; 
@@ -781,8 +784,7 @@ int main(void)
         }
               
     }
-    free(RZ);
-    free(month);
+    
     free(data);
     return 0;
 }
